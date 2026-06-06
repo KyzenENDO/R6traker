@@ -1,0 +1,544 @@
+/* ═══════════════════════════════════════════════
+   R6 OVERLAY — HUD Stylesheet (Compact W/L/Streak)
+   ═══════════════════════════════════════════════ */
+
+:root {
+    --bg-overlay: rgba(10, 11, 15, 0.85);
+    --bg-glass: rgba(22, 24, 34, 0.7);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #a3a8cc;
+    --accent-orange: #f5a623;
+
+    /* Streak colors */
+    --color-win: #22c55e;
+    --color-loss: #ef4444;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    background: transparent;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* ─── Drag Handle (visible when unlocked) ─── */
+.drag-handle {
+    position: absolute;
+    inset: 0;
+    background: rgba(245, 166, 35, 0.15);
+    border: 3px dashed var(--accent-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    -webkit-app-region: drag;
+    cursor: move;
+}
+
+body.unlocked .drag-handle {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.drag-text {
+    background: #0a0b0f;
+    border: 1px solid var(--accent-orange);
+    padding: 12px 18px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    animation: pulseBorder 1.5s infinite alternate;
+}
+
+@keyframes pulseBorder {
+    from { box-shadow: 0 0 10px rgba(245, 166, 35, 0.2); }
+    to { box-shadow: 0 0 20px rgba(245, 166, 35, 0.6); }
+}
+
+.drag-text span {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    color: var(--accent-orange);
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+}
+
+.drag-subtext {
+    font-size: 0.72rem !important;
+    font-weight: 400 !important;
+    color: #8b8fa3 !important;
+    text-transform: uppercase;
+}
+
+/* ─── Overlay Container ─── */
+.overlay-container {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 8px;
+    width: auto;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+body.unlocked .overlay-container {
+    background: rgba(10, 11, 15, 0.85);
+    border-color: var(--accent-orange);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+}
+
+/* ─── HUD Stats Bar ─── */
+.overlay-hud {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(10, 11, 15, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 6px 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.hud-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 14px;
+}
+
+.hud-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.hud-wins .hud-stat-icon {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--color-win);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);
+}
+
+.hud-losses .hud-stat-icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-loss);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
+}
+
+.hud-streak .hud-stat-icon {
+    background: rgba(245, 166, 35, 0.15);
+    color: var(--accent-orange);
+    box-shadow: 0 0 8px rgba(245, 166, 35, 0.15);
+}
+
+.hud-stat-content {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.hud-stat-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.hud-wins .hud-stat-value {
+    color: var(--color-win);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+.hud-losses .hud-stat-value {
+    color: var(--color-loss);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.hud-stat-value.win {
+    color: var(--color-win);
+    text-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+}
+
+.hud-stat-value.loss {
+    color: var(--color-loss);
+    text-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+}
+
+.hud-stat-value.neutral {
+    color: var(--text-secondary);
+}
+
+.hud-stat-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    margin-top: 1px;
+}
+
+/* Streak icon dynamic color */
+.hud-streak.streak-positive .hud-stat-icon {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--color-win);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);
+}
+
+.hud-streak.streak-negative .hud-stat-icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-loss);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.15);
+}
+
+/* Dividers */
+.hud-divider {
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent);
+    flex-shrink: 0;
+}
+
+/* ─── Footer ─── */
+.overlay-footer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.15);
+    padding-top: 2px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+body.unlocked .overlay-footer {
+    opacity: 1;
+}
+
+/* ─── Subtle pulse animation for active streak ─── */
+@keyframes streakPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.hud-stat-value.win,
+.hud-stat-value.loss {
+    animation: streakPulse 2s ease-in-out infinite;
+}
+
+.hud-stat-value.neutral {
+    animation: none;
+}
+
+/* ─── Teams Layout ─── */
+.teams-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    flex-grow: 1;
+    overflow: hidden;
+    margin-top: 10px;
+    padding: 0 4px;
+}
+
+.team-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.team-title-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 12px;
+}
+
+.team-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.teammate-dot { background: var(--color-win); box-shadow: 0 0 6px var(--color-win); }
+.opponent-dot { background: var(--color-loss); box-shadow: 0 0 6px var(--color-loss); }
+
+.team-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+}
+
+.players-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.no-players {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.2);
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px dashed rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* ─── Player Row (Scoreboard Aligned) ─── */
+.player-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 0 10px;
+    font-size: 0.85rem;
+    height: 38px;
+    box-sizing: border-box;
+    transition: background 0.2s ease;
+}
+
+body.unlocked .player-row {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.player-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.player-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-platform-icon {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+.player-name-text {
+    font-weight: 500;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.teammates-section .player-name-text {
+    color: #e0f2fe;
+}
+
+.opponents-section .player-name-text {
+    color: #fff7ed;
+}
+
+.player-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-rank-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ─── Quick Result Panel ─── */
+.quick-result-panel {
+    background: rgba(10, 11, 15, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 14px 12px;
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.quick-result-panel.qr-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.qr-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.qr-game-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.qr-game-dot.qr-dot-active {
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+    animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.8); }
+    50%  { box-shadow: 0 0 16px rgba(34, 197, 94, 1); }
+}
+
+.qr-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #22c55e;
+}
+
+.qr-subtitle {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-left: auto;
+}
+
+.qr-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.qr-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 6px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    outline: none;
+}
+
+.qr-win {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.qr-win:hover {
+    background: rgba(34, 197, 94, 0.3);
+    box-shadow: 0 0 14px rgba(34, 197, 94, 0.35);
+    transform: translateY(-1px);
+}
+
+.qr-win:active {
+    background: rgba(34, 197, 94, 0.5);
+    transform: translateY(0);
+}
+
+.qr-draw {
+    background: rgba(163, 168, 204, 0.1);
+    color: #a3a8cc;
+    border: 1px solid rgba(163, 168, 204, 0.2);
+}
+
+.qr-draw:hover {
+    background: rgba(163, 168, 204, 0.2);
+    box-shadow: 0 0 10px rgba(163, 168, 204, 0.2);
+    transform: translateY(-1px);
+}
+
+.qr-draw:active {
+    background: rgba(163, 168, 204, 0.35);
+    transform: translateY(0);
+}
+
+.qr-loss {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.qr-loss:hover {
+    background: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.35);
+    transform: translateY(-1px);
+}
+
+.qr-loss:active {
+    background: rgba(239, 68, 68, 0.5);
+    transform: translateY(0);
+}
+
+.qr-feedback {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-align: center;
+    min-height: 14px;
+    color: transparent;
+    transition: color 0.2s ease;
+}
+
+.qr-feedback-win  { color: #22c55e; }
+.qr-feedback-draw { color: #a3a8cc; }
+.qr-feedback-loss { color: #ef4444; }

@@ -1,0 +1,147 @@
+
+/* ═══════════════════════════════════════════════
+   TABSTATS INTEGRATION STYLES
+   Stats en ligne depuis Tabstats.com
+   ═══════════════════════════════════════════════ */
+
+/* Stats externes sur les cartes joueur */
+.player-external-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 0 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: 8px;
+}
+
+.ext-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 52px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 6px 8px;
+    gap: 2px;
+}
+
+.ext-stat-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.ext-stat-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.ext-stats-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0 0;
+    gap: 8px;
+}
+
+.ext-source-badge {
+    font-size: 10px;
+    color: #4fc3f7;
+    background: rgba(79, 195, 247, 0.1);
+    border: 1px solid rgba(79, 195, 247, 0.2);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-weight: 600;
+}
+
+.ext-last-updated {
+    font-size: 10px;
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.player-no-stats {
+    padding: 10px 0 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: 8px;
+}
+
+.player-no-stats span {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Bouton "Stats en ligne" */
+.fetch-stats-btn {
+    background: linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(79, 195, 247, 0.08)) !important;
+    border: 1px solid rgba(79, 195, 247, 0.3) !important;
+    color: #4fc3f7 !important;
+    font-size: 12px !important;
+    padding: 7px 12px !important;
+    transition: all 0.2s ease !important;
+}
+
+.fetch-stats-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(79, 195, 247, 0.25), rgba(79, 195, 247, 0.15)) !important;
+    border-color: rgba(79, 195, 247, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+.fetch-stats-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* Spinner animation */
+.spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Modal recherche stats */
+#modal-search-stats .modal-box {
+    border: 1px solid rgba(79, 195, 247, 0.2);
+}
+
+.stats-result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 16px 0;
+}
+
+.stats-result-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.stats-result-item .value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.stats-result-item .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+

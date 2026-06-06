@@ -1,0 +1,32 @@
+{
+  "name": "r6-tracker",
+  "version": "1.1.0",
+  "description": "R6 Siege Tracker with In-Game Overlay",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "screenshot-desktop": "^1.15.4",
+    "tesseract.js": "^7.0.0",
+    "uiohook-napi": "^1.5.5"
+  },
+  "build": {
+    "appId": "com.r6tracker.app",
+    "productName": "R6 Tracker",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

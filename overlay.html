@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R6 Tracker Overlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="overlay.css">
+</head>
+<body class="locked">
+    <!-- Unlocked helper overlay for dragging/positioning -->
+    <div id="drag-handle" class="drag-handle">
+        <div class="drag-text">
+            <span>[F10] VERROUILLER L'OVERLAY</span>
+            <span class="drag-subtext">Glissez pour déplacer l'overlay</span>
+        </div>
+    </div>
+
+    <div class="overlay-container">
+        <!-- Compact Session Stats HUD -->
+        <div class="overlay-hud">
+            <!-- Wins -->
+            <div class="hud-stat hud-wins">
+                <div class="hud-stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/>
+                        <path d="M18 9H6l1 6c.17 1.07.91 2 2.01 2h5.98c1.1 0 1.84-.93 2.01-2l1-6z"/>
+                    </svg>
+                </div>
+                <div class="hud-stat-content">
+                    <span class="hud-stat-value" id="session-wins">0</span>
+                    <span class="hud-stat-label">WINS</span>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="hud-divider"></div>
+
+            <!-- Losses -->
+            <div class="hud-stat hud-losses">
+                <div class="hud-stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="hud-stat-content">
+                    <span class="hud-stat-value" id="session-losses">0</span>
+                    <span class="hud-stat-label">LOSSES</span>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="hud-divider"></div>
+
+            <!-- Streak -->
+            <div class="hud-stat hud-streak">
+                <div class="hud-stat-icon streak-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                    </svg>
+                </div>
+                <div class="hud-stat-content">
+                    <span class="hud-stat-value neutral" id="session-streak">0</span>
+                    <span class="hud-stat-label">SÉRIE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Match Players Layout -->
+        <div class="teams-container" id="teams-container" style="display: none;">
+            <!-- Blue Team (Teammates) -->
+            <div class="team-section teammates-section">
+                <div class="team-title-bar">
+                    <span class="team-dot teammate-dot"></span>
+                    <span class="team-name">MON ÉQUIPE</span>
+                </div>
+                <div class="players-list" id="teammates-list">
+                    <div class="no-players">Aucun coéquipier sélectionné</div>
+                </div>
+            </div>
+
+            <!-- Orange Team (Opponents) -->
+            <div class="team-section opponents-section">
+                <div class="team-title-bar">
+                    <span class="team-dot opponent-dot"></span>
+                    <span class="team-name">ADVERSAIRES</span>
+                </div>
+                <div class="players-list" id="opponents-list">
+                    <div class="no-players">Aucun adversaire sélectionné</div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Hotkey Reminders Footer -->
+        <div class="overlay-footer">
+            <span>F9: Masquer</span>
+            <span>•</span>
+            <span>F10: Déplacer</span>
+        </div>
+    </div>
+
+    <script src="overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R6 Tracker — Suivi de Performances</title>
+    <meta name="description" content="Suivez vos victoires, défaites et le rang de vos coéquipiers et adversaires sur Rainbow Six Siege.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tabstats_styles.css">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Header -->
+    <header id="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 4L4 14v20l20 10 20-10V14L24 4z" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M24 8L8 16v16l16 8 16-8V16L24 8z" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+                    <path d="M24 14v20M14 19l10 5 10-5M14 29l10 5 10-5" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
+                </svg>
+                <div>
+                    <h1>R6 TRACKER</h1>
+                    <span class="logo-subtitle">PERFORMANCE MONITOR</span>
+                </div>
+            </div>
+            <nav id="main-nav">
+                <button class="nav-btn active" data-tab="dashboard" id="nav-dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Dashboard
+                </button>
+                <button class="nav-btn" data-tab="matches" id="nav-matches">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/></svg>
+                    Matchs
+                </button>
+                <button class="nav-btn" data-tab="players" id="nav-players">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Joueurs
+                </button>
+                <button class="nav-btn" data-tab="scoreboard" id="nav-scoreboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    Tableau de Score
+                </button>
+                <button class="nav-btn" data-tab="ranking" id="nav-ranking">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                    Classement
+                </button>
+                <button class="nav-btn" data-tab="overlay" id="nav-overlay">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    Overlay In-Game
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="app-main">
+        <!-- Dashboard Tab -->
+        <section id="tab-dashboard" class="tab-content active">
+            <div class="stats-overview">
+                <div class="stat-card stat-wins" id="stat-wins">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 19.24 7 20h10c0-.76-.85-1.25-2.03-1.79C14.47 17.98 14 17.55 14 17v-2.34"/><path d="M18 9H6l1 6c.17 1.07.91 2 2.01 2h5.98c1.1 0 1.84-.93 2.01-2l1-6z"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Victoires</span>
+                        <span class="stat-value" id="total-wins">0</span>
+                    </div>
+                    <div class="stat-trend" id="win-trend"></div>
+                </div>
+                <div class="stat-card stat-losses" id="stat-losses">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Défaites</span>
+                        <span class="stat-value" id="total-losses">0</span>
+                    </div>
+                    <div class="stat-trend" id="loss-trend"></div>
+                </div>
+                <div class="stat-card stat-winrate" id="stat-winrate">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Win Rate</span>
+                        <span class="stat-value" id="total-winrate">0%</span>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" id="winrate-bar"></div>
+                    </div>
+                </div>
+                <div class="stat-card stat-total" id="stat-total">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Matchs</span>
+                        <span class="stat-value" id="total-matches">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Win/Loss Chart -->
+            <div class="chart-section">
+                <div class="section-header">
+                    <h2>Historique des Performances</h2>
+                    <div class="chart-legend">
+                        <span class="legend-item legend-win"><span class="legend-dot"></span> Victoires</span>
+                        <span class="legend-item legend-loss"><span class="legend-dot"></span> Défaites</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performance-chart"></canvas>
+                    <div class="chart-empty" id="chart-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                        <p>Ajoutez des matchs pour voir vos performances</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Matches -->
+            <div class="recent-section">
+                <div class="section-header">
+                    <h2>Matchs Récents</h2>
+                    <button class="btn-secondary" id="btn-goto-matches">Voir tout</button>
+                </div>
+                <div id="recent-matches-list" class="matches-list">
+                    <div class="empty-state" id="recent-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/></svg>
+                        <p>Aucun match enregistré</p>
+                        <button class="btn-primary" id="btn-add-first-match">Ajouter un match</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Matches Tab -->
+        <section id="tab-matches" class="tab-content">
+            <div class="section-header">
+                <h2>Historique des Matchs</h2>
+                <button class="btn-primary" id="btn-add-match">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Nouveau Match
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-bar" id="match-filters">
+                <button class="filter-btn active" data-filter="all">Tous</button>
+                <button class="filter-btn" data-filter="win">Victoires</button>
+                <button class="filter-btn" data-filter="loss">Défaites</button>
+            </div>
+
+            <div id="matches-list" class="matches-list">
+                <div class="empty-state" id="matches-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/></svg>
+                    <h3>Aucun match enregistré</h3>
+                    <p>Commencez à suivre vos performances en ajoutant votre premier match</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Players Tab -->
+        <section id="tab-players" class="tab-content">
+            <div class="section-header">
+                <h2>Joueurs</h2>
+                <button class="btn-primary" id="btn-add-player">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Ajouter Joueur
+                </button>
+            </div>
+
+            <!-- Global Search Bar -->
+            <div class="global-search-container">
+                <form id="global-search-form" class="global-search-bar">
+                    <div class="global-search-platforms">
+                        <label class="platform-btn active" title="PC">
+                            <input type="radio" name="global-platform" value="pc" checked>
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+                        </label>
+                        <label class="platform-btn" title="Xbox">
+                            <input type="radio" name="global-platform" value="xbox">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.952 4.116c1.639 1.113 2.923 2.665 3.659 4.471-1.285-1.395-3.08-2.616-5.385-3.551.597-.336 1.173-.655 1.726-.92zm-11.904 0c.553.265 1.129.584 1.726.92-2.305.935-4.1 2.156-5.385 3.551.736-1.806 2.02-3.358 3.659-4.471zm6.275 1.834c3.08 1.055 5.258 2.531 6.309 4.094-2.887 2.871-6.141 5.922-6.524 8.785-.433-2.828-3.773-5.832-6.664-8.672 1.094-1.57 3.328-3.09 6.477-4.18v-.027zm-7.66 4.965c2.477 2.43 5.48 5.176 5.86 7.641-2.906-.82-5.289-2.73-6.691-5.188.226-1.016.515-1.844.831-2.453zm9.64 7.633c.368-2.453 3.332-5.148 5.766-7.531.336.633.645 1.492.883 2.551-1.426 2.406-3.793 4.265-6.649 4.98z"/></svg>
+                        </label>
+                        <label class="platform-btn" title="PlayStation">
+                            <input type="radio" name="global-platform" value="psn">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.669 17.155c-.464.586-1.602 1.004-3.375 1.236-2.883.375-7.427.422-7.551.422v-3.133c1.782-.016 3.963-.09 5.371-.242 1.348-.145 1.57-.457 1.488-.695-.082-.246-.576-.492-2.148-.684-1.656-.203-3.834-.285-4.711-.301v-3.078c1.693.02 3.863.098 5.766.297 1.947.203 3.326.602 3.693 1.074.375.48.246 1.109-.168 1.637l.484.551-.102.133-1.047-.324.086-.117-.461-.531zm-10.418-2.61c-1.391-.016-3.027.063-4.305.215-1.168.137-1.422.383-1.352.574.07.195.488.406 1.766.574 1.332.176 3.125.266 3.891.285v-1.648zm0-4.086c-1.887-.02-3.895-.125-5.32-.34-1.258-.188-1.742-.488-1.574-.754.168-.262.887-.504 2.477-.699 1.668-.207 3.652-.293 4.418-.305v-1.809c-2.48.02-5.594.133-7.797.406-2.195.273-3.238.746-3.344 1.254-.113.527.766 1.102 3.238 1.465 1.953.289 4.602.406 6.848.422v2.176zm.524 9.074v1.898c1.238-.133 2.191-.32 2.625-.516.449-.207.574-.438.484-.57-.082-.137-.418-.219-1.121-.242l-.246-.922c1.082.023 1.832.156 2.121.41.289.262.246.68-.074 1.059-.313.375-1.027.711-2.188.949-1.242.254-3.125.434-5.316.488v2.09c0 .641-.09 1.129-.258 1.391-.184.285-.566.457-1.117.508v-17.75c1.691 0 2.91.074 3.469.215.578.145.898.43.91.805.016.383-.242.871-.859 1.402-.609.52-1.785.836-3.52.883v5.621c1.805.016 4.148.113 5.625.332 1.418.211 2.051.563 1.93.91-.121.352-.898.664-2.508.887-1.57.219-3.695.34-5.047.363v1.649c1.621-.023 3.863-.125 5.566-.328 1.719-.207 2.457-.59 2.25-1.008l1.047-.195c.293.633-.504 1.23-2.078 1.551-1.637.332-4.145.508-6.785.524z"/></svg>
+                        </label>
+                    </div>
+                    <input type="text" id="global-search-input" placeholder="Chercher un joueur sur R6 Tracker (Ubisoft ID, PSN, Xbox Live)" required>
+                    <button type="submit" class="global-search-submit" id="global-search-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                </form>
+            </div>
+
+            <div class="players-tabs">
+                <button class="player-tab-btn active" data-ptab="teammates" id="btn-teammates">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    Coéquipiers
+                </button>
+                <button class="player-tab-btn" data-ptab="opponents" id="btn-opponents">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    Adversaires
+                </button>
+            </div>
+
+            <div id="players-list" class="players-grid">
+                <div class="empty-state" id="players-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <h3>Aucun joueur ajouté</h3>
+                    <p>Ajoutez des joueurs pour suivre leurs rangs et performances</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Classement (Ranking) Tab -->
+        <section id="tab-ranking" class="tab-content">
+            <div class="section-header">
+                <h2>Classement des Joueurs</h2>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <div class="ranking-filter-group" id="ranking-scope-group">
+                        <button class="filter-btn active" data-scope="local" id="scope-local">Local</button>
+                        <button class="filter-btn" data-scope="global" id="scope-global">Mondial (Live)</button>
+                    </div>
+                    <div class="ranking-filter-group" id="ranking-filter-group">
+                        <button class="filter-btn active" data-rfilter="all" id="rfilter-all">Tous</button>
+                        <button class="filter-btn" data-rfilter="teammates" id="rfilter-teammates">Coéquipiers</button>
+                        <button class="filter-btn" data-rfilter="opponents" id="rfilter-opponents">Adversaires</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Podium for Top 3 -->
+            <div class="ranking-podium" id="ranking-podium">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Full Ranking List -->
+            <div class="ranking-table-wrapper">
+                <div class="ranking-table-header">
+                    <span class="rank-col-pos">#</span>
+                    <span class="rank-col-name">Joueur</span>
+                    <span class="rank-col-type">Type</span>
+                    <span class="rank-col-rank">Rang</span>
+                    <span class="rank-col-stats">W / L</span>
+                    <span class="rank-col-winrate">Win Rate</span>
+                </div>
+                <div class="ranking-list" id="ranking-list">
+                    <div class="empty-state" id="ranking-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                        <h3>Aucun joueur dans le classement</h3>
+                        <p>Ajoutez des joueurs dans l'onglet "Joueurs" pour voir le classement</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scoreboard (Auto OCR) Tab -->
+        <section id="tab-scoreboard" class="tab-content">
+            <div class="section-header">
+                <h2>Tableau de Score (Auto-OCR)</h2>
+                <button class="btn-primary" onclick="window.r6api?.triggerManualScan();">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
+                    Relancer un Scan
+                </button>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">Ce tableau se met à jour automatiquement avec la capture d'écran invisible en jeu. Les joueurs affichés s'effacent à chaque nouveau scan.</p>
+            <div id="scoreboard-list" class="players-grid">
+                <div class="empty-state" id="scoreboard-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    <h3>Aucun scan récent</h3>
+                    <p>Appuyez sur la touche Clic Central (Molette) en jeu lorsque le tableau des scores est ouvert.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overlay Config Tab -->
+        <section id="tab-overlay" class="tab-content">
+            <div class="section-header">
+                <h2>Configuration de l'Overlay In-Game</h2>
+                <div class="overlay-status-badges">
+                    <span id="control-overlay-visible-badge" class="overlay-badge badge-active">Actif (Molette)</span>
+                    <span id="control-overlay-locked-badge" class="overlay-badge badge-locked">Verrouillé (F10)</span>
+                </div>
+            </div>
+
+            <div class="overlay-grid">
+                <!-- Status & Hotkey Info -->
+                <div class="stat-card overlay-controls-card">
+                    <h3>Contrôles de l'Overlay</h3>
+                    <p class="card-desc">Configurez l'affichage de l'overlay transparent par-dessus Rainbow Six Siege.</p>
+                    
+                    <div class="overlay-action-row">
+                        <button class="btn-primary" id="btn-toggle-overlay-visible">
+                            Afficher / Scan (Molette)
+                        </button>
+                        <button class="btn-secondary" id="btn-toggle-overlay-locked">
+                            Déplacer / Verrouiller (F10)
+                        </button>
+                    </div>
+
+                    <div class="hotkey-instructions">
+                        <div class="instruction-item">
+                            <kbd>Molette</kbd>
+                            <span>(Clic Central) Affiche l'overlay sans perte de focus et lance le scan OCR du scoreboard.</span>
+                        </div>
+                        <div class="instruction-item">
+                            <kbd>F10</kbd>
+                            <span>Déverrouille l'overlay pour le positionner à l'écran, puis le verrouille.</span>
+                        </div>
+                        <div class="instruction-item font-highlight">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span>R6 Siege doit être en mode <strong>"Fenêtré sans bordure"</strong> (Borderless).</span>
+                        </div>
+                    </div>
+
+                    <!-- Spacing Slider for R6 Scoreboard Alignment -->
+                    <div class="form-group" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <label for="input-row-spacing" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Alignement Scoreboard (Espacement)</span>
+                            <span id="label-row-spacing" style="color: var(--accent-primary); font-family: 'Rajdhani', sans-serif; font-weight: 700;">38px</span>
+                        </label>
+                        <input type="range" id="input-row-spacing" min="38" max="70" value="38" style="width: 100%; margin-top: 8px; cursor: pointer; accent-color: var(--accent-primary);">
+                        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; line-height: 1.3;">Ajustez l'espacement pour que les rangs s'alignent exactement avec les lignes du tableau de score R6.</p>
+                    </div>
+
+                    <!-- Screen/Display Selector for Multi-Monitor -->
+                    <div class="form-group" style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <label for="input-display-select" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Écran de capture (Multi-Moniteur)</span>
+                        </label>
+                        <select id="input-display-select" style="width: 100%; margin-top: 8px; padding: 8px 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; cursor: pointer;">
+                            <option value="0">Chargement des écrans...</option>
+                        </select>
+                        <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; line-height: 1.3;">Si l'OCR capture le mauvais écran, sélectionnez ici l'écran sur lequel vous jouez à R6 Siege.</p>
+                    </div>
+                </div>
+
+                <!-- Win/Loss Streak Manager -->
+                <div class="stat-card streak-manager-card">
+                    <h3>Compteur de Session</h3>
+                    <p class="card-desc">Gérez votre série de victoires et défaites. Les matchs enregistrés mettront à jour ce compteur automatiquement.</p>
+                    
+                    <div class="streak-control-box" style="margin-bottom: 12px;">
+                        <button type="button" class="streak-adjust-btn minus" id="btn-streak-minus">—</button>
+                        <div class="streak-display-big">
+                            <span class="streak-number" id="control-streak-value">0</span>
+                            <span class="streak-label">SÉRIE ACTUELLE</span>
+                        </div>
+                        <button type="button" class="streak-adjust-btn plus" id="btn-streak-plus">+</button>
+                    </div>
+
+                    <!-- Wins/Losses Details inside Streak Manager -->
+                    <div class="streak-session-stats" style="display: flex; justify-content: space-around; margin-bottom: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 500;">Victoires (Wins)</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                <button type="button" class="btn-secondary" id="btn-wins-minus" style="padding: 2px 8px; min-width: auto; height: 26px; font-size: 0.75rem;">-</button>
+                                <span id="control-wins-value" style="font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--win-color);">0</span>
+                                <button type="button" class="btn-secondary" id="btn-wins-plus" style="padding: 2px 8px; min-width: auto; height: 26px; font-size: 0.75rem;">+</button>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 500;">Défaites (Losses)</div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                <button type="button" class="btn-secondary" id="btn-losses-minus" style="padding: 2px 8px; min-width: auto; height: 26px; font-size: 0.75rem;">-</button>
+                                <span id="control-losses-value" style="font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--loss-color);">0</span>
+                                <button type="button" class="btn-secondary" id="btn-losses-plus" style="padding: 2px 8px; min-width: auto; height: 26px; font-size: 0.75rem;">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-secondary btn-full" id="btn-streak-reset">Réinitialiser la Session</button>
+                </div>
+            </div>
+
+            <!-- Active Match Setup -->
+            <div class="active-match-section">
+                <div class="section-header">
+                    <div>
+                        <h3>Joueurs du Match en Cours</h3>
+                        <p class="section-desc">Sélectionnez les coéquipiers et adversaires à afficher en temps réel sur l'overlay.</p>
+                    </div>
+                </div>
+
+                <div class="active-players-grid">
+                    <!-- Teammates Selector -->
+                    <div class="active-team-col active-teammates">
+                        <h4>
+                            <span class="team-dot teammate-dot"></span>
+                            Coéquipiers
+                        </h4>
+                        <div class="active-selectors-list" id="active-teammates-selectors">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Opponents Selector -->
+                    <div class="active-team-col active-opponents">
+                        <h4>
+                            <span class="team-dot opponent-dot"></span>
+                            Adversaires
+                        </h4>
+                        <div class="active-selectors-list" id="active-opponents-selectors">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Match Modal -->
+    <div class="modal-overlay" id="modal-match">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Nouveau Match</h2>
+                <button class="modal-close" id="close-match-modal">&times;</button>
+            </div>
+            <form id="match-form">
+                <div class="form-group">
+                    <label for="match-map">Carte</label>
+                    <select id="match-map" required>
+                        <option value="">Sélectionner une carte</option>
+                        <option value="Bank">Bank</option>
+                        <option value="Border">Border</option>
+                        <option value="Chalet">Chalet</option>
+                        <option value="Clubhouse">Clubhouse</option>
+                        <option value="Coastline">Coastline</option>
+                        <option value="Consulate">Consulate</option>
+                        <option value="Emerald Plains">Emerald Plains</option>
+                        <option value="Kafe">Kafe Dostoyevsky</option>
+                        <option value="Kanal">Kanal</option>
+                        <option value="Lair">Lair</option>
+                        <option value="Nighthaven Labs">Nighthaven Labs</option>
+                        <option value="Oregon">Oregon</option>
+                        <option value="Outback">Outback</option>
+                        <option value="Skyscraper">Skyscraper</option>
+                        <option value="Theme Park">Theme Park</option>
+                        <option value="Villa">Villa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Résultat</label>
+                    <div class="result-toggle">
+                        <input type="radio" name="result" value="win" id="result-win" required>
+                        <label for="result-win" class="result-option result-win-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 19.24 7 20h10c0-.76-.85-1.25-2.03-1.79C14.47 17.98 14 17.55 14 17v-2.34"/><path d="M18 9H6l1 6c.17 1.07.91 2 2.01 2h5.98c1.1 0 1.84-.93 2.01-2l1-6z"/></svg>
+                            Victoire
+                        </label>
+                        <input type="radio" name="result" value="loss" id="result-loss">
+                        <label for="result-loss" class="result-option result-loss-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            Défaite
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="match-score-us">Score Allié</label>
+                        <input type="number" id="match-score-us" min="0" max="9" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="match-score-them">Score Ennemi</label>
+                        <input type="number" id="match-score-them" min="0" max="9" placeholder="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="match-teammates">Coéquipiers (sélection multiple)</label>
+                    <div class="multi-select" id="teammates-select">
+                        <div class="multi-select-display" id="teammates-display">Aucun coéquipier sélectionné</div>
+                        <div class="multi-select-dropdown" id="teammates-dropdown"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="match-opponents">Adversaires notables (sélection multiple)</label>
+                    <div class="multi-select" id="opponents-select">
+                        <div class="multi-select-display" id="opponents-display">Aucun adversaire sélectionné</div>
+                        <div class="multi-select-dropdown" id="opponents-dropdown"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="match-notes">Notes (optionnel)</label>
+                    <textarea id="match-notes" rows="2" placeholder="Ex: Overtime, clutch round..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-match">Annuler</button>
+                    <button type="submit" class="btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Player Modal -->
+    <div class="modal-overlay" id="modal-player">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Ajouter un Joueur</h2>
+                <button class="modal-close" id="close-player-modal">&times;</button>
+            </div>
+            <form id="player-form">
+                <div class="form-group">
+                    <label for="player-name">Pseudo</label>
+                    <input type="text" id="player-name" placeholder="Nom du joueur" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Type</label>
+                    <div class="result-toggle">
+                        <input type="radio" name="player-type" value="teammate" id="type-teammate" checked>
+                        <label for="type-teammate" class="result-option">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            Coéquipier
+                        </label>
+                        <input type="radio" name="player-type" value="opponent" id="type-opponent">
+                        <label for="type-opponent" class="result-option">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            Adversaire
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="player-rank">Rang</label>
+                    <select id="player-rank" required>
+                        <option value="">Sélectionner un rang</option>
+                        <option value="Non Classé">Non Classé</option>
+                        <option value="Copper V">Copper V</option>
+                        <option value="Copper IV">Copper IV</option>
+                        <option value="Copper III">Copper III</option>
+                        <option value="Copper II">Copper II</option>
+                        <option value="Copper I">Copper I</option>
+                        <option value="Bronze V">Bronze V</option>
+                        <option value="Bronze IV">Bronze IV</option>
+                        <option value="Bronze III">Bronze III</option>
+                        <option value="Bronze II">Bronze II</option>
+                        <option value="Bronze I">Bronze I</option>
+                        <option value="Silver V">Silver V</option>
+                        <option value="Silver IV">Silver IV</option>
+                        <option value="Silver III">Silver III</option>
+                        <option value="Silver II">Silver II</option>
+                        <option value="Silver I">Silver I</option>
+                        <option value="Gold V">Gold V</option>
+                        <option value="Gold IV">Gold IV</option>
+                        <option value="Gold III">Gold III</option>
+                        <option value="Gold II">Gold II</option>
+                        <option value="Gold I">Gold I</option>
+                        <option value="Platinum V">Platinum V</option>
+                        <option value="Platinum IV">Platinum IV</option>
+                        <option value="Platinum III">Platinum III</option>
+                        <option value="Platinum II">Platinum II</option>
+                        <option value="Platinum I">Platinum I</option>
+                        <option value="Emerald V">Emerald V</option>
+                        <option value="Emerald IV">Emerald IV</option>
+                        <option value="Emerald III">Emerald III</option>
+                        <option value="Emerald II">Emerald II</option>
+                        <option value="Emerald I">Emerald I</option>
+                        <option value="Diamond V">Diamond V</option>
+                        <option value="Diamond IV">Diamond IV</option>
+                        <option value="Diamond III">Diamond III</option>
+                        <option value="Diamond II">Diamond II</option>
+                        <option value="Diamond I">Diamond I</option>
+                        <option value="Champion">Champion</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="player-platform">Plateforme</label>
+                    <select id="player-platform">
+                        <option value="PC">PC</option>
+                        <option value="PlayStation">PlayStation</option>
+                        <option value="Xbox">Xbox</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-player">Annuler</button>
+                    <button type="submit" class="btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Player Modal -->
+    <div class="modal-overlay" id="modal-edit-player">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Modifier le Joueur</h2>
+                <button class="modal-close" id="close-edit-player-modal">&times;</button>
+            </div>
+            <form id="edit-player-form">
+                <input type="hidden" id="edit-player-id">
+                <div class="form-group">
+                    <label for="edit-player-name">Pseudo</label>
+                    <input type="text" id="edit-player-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-player-rank">Rang</label>
+                    <select id="edit-player-rank" required>
+                        <option value="">Sélectionner un rang</option>
+                        <option value="Non Classé">Non Classé</option>
+                        <option value="Copper V">Copper V</option>
+                        <option value="Copper IV">Copper IV</option>
+                        <option value="Copper III">Copper III</option>
+                        <option value="Copper II">Copper II</option>
+                        <option value="Copper I">Copper I</option>
+                        <option value="Bronze V">Bronze V</option>
+                        <option value="Bronze IV">Bronze IV</option>
+                        <option value="Bronze III">Bronze III</option>
+                        <option value="Bronze II">Bronze II</option>
+                        <option value="Bronze I">Bronze I</option>
+                        <option value="Silver V">Silver V</option>
+                        <option value="Silver IV">Silver IV</option>
+                        <option value="Silver III">Silver III</option>
+                        <option value="Silver II">Silver II</option>
+                        <option value="Silver I">Silver I</option>
+                        <option value="Gold V">Gold V</option>
+                        <option value="Gold IV">Gold IV</option>
+                        <option value="Gold III">Gold III</option>
+                        <option value="Gold II">Gold II</option>
+                        <option value="Gold I">Gold I</option>
+                        <option value="Platinum V">Platinum V</option>
+                        <option value="Platinum IV">Platinum IV</option>
+                        <option value="Platinum III">Platinum III</option>
+                        <option value="Platinum II">Platinum II</option>
+                        <option value="Platinum I">Platinum I</option>
+                        <option value="Emerald V">Emerald V</option>
+                        <option value="Emerald IV">Emerald IV</option>
+                        <option value="Emerald III">Emerald III</option>
+                        <option value="Emerald II">Emerald II</option>
+                        <option value="Emerald I">Emerald I</option>
+                        <option value="Diamond V">Diamond V</option>
+                        <option value="Diamond IV">Diamond IV</option>
+                        <option value="Diamond III">Diamond III</option>
+                        <option value="Diamond II">Diamond II</option>
+                        <option value="Diamond I">Diamond I</option>
+                        <option value="Champion">Champion</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-player-platform">Plateforme</label>
+                    <select id="edit-player-platform">
+                        <option value="PC">PC</option>
+                        <option value="PlayStation">PlayStation</option>
+                        <option value="Xbox">Xbox</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-edit-player">Annuler</button>
+                    <button type="submit" class="btn-primary">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- R6 Tracker Profile Modal -->
+    <div class="modal-overlay" id="modal-tracker-profile">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Profil R6 Tracker</h2>
+                <button class="modal-close" id="close-tracker-modal">&times;</button>
+            </div>
+            <div id="tracker-profile-content" class="tracker-profile-content" style="padding: 16px 0;">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="form-actions" style="margin-top: 16px;">
+                <button type="button" class="btn-secondary" id="tracker-modal-add-teammate">Ajouter comme Coéquipier</button>
+                <button type="button" class="btn-danger" id="tracker-modal-add-opponent" style="background-color: var(--loss-color);">Ajouter comme Adversaire</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="modal-confirm">
+        <div class="modal modal-small">
+            <div class="modal-header">
+                <h2>Confirmer la suppression</h2>
+                <button class="modal-close" id="close-confirm-modal">&times;</button>
+            </div>
+            <p id="confirm-message" class="confirm-text">Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+            <div class="form-actions">
+                <button class="btn-secondary" id="cancel-confirm">Annuler</button>
+                <button class="btn-danger" id="confirm-action">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Toast Notification -->
+    <div id="toast-container"></div>
+
+    <!-- Hidden Elements for OCR Recording -->
+    <video id="ocr-video-stream" style="display:none;" muted></video>
+    <canvas id="ocr-canvas" style="display:none;"></canvas>
+
+    <script src="app.js"></script>
+</body>
+</html>
