@@ -1,6 +1,6 @@
 {
   "name": "r6-tracker",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "R6 Siege Tracker with In-Game Overlay",
   "main": "main.js",
   "scripts": {

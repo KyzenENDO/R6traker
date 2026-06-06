@@ -735,35 +735,109 @@
         autoTrackerInterval = null;
     }
 
-    // --- NATIVE ELECTRON SCREEN RECORDING FOR OCR ---
+    // --- HYBRID SCREEN RECORDING FOR OCR (PC Fixe + PC Portable) ---
     let backgroundOcrInterval = null;
     let ocrCooldown = false;
+    let localStream = null;
+    let ocrStreamInterval = null;
+    let useNativeCapturer = false; // false = getUserMedia (PC fixe), true = desktopCapturer (PC portable)
 
-    function startScreenRecording() {
-        if (backgroundOcrInterval) return;
-        
+    // Méthode 1 : getUserMedia (PC fixe, 1 GPU)
+    async function startStreamCapture() {
+        try {
+            const sourceId = await window.r6api.getScreenSourceId();
+            if (!sourceId) throw new Error('No source ID');
+
+            localStream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    mandatory: {
+                        chromeMediaSource: 'desktop',
+                        chromeMediaSourceId: sourceId,
+                        minWidth: 1280, maxWidth: 1920,
+                        minHeight: 720, maxHeight: 1080
+                    }
+                }
+            });
+
+            const video = document.getElementById('ocr-video-stream') || (() => {
+                const v = document.createElement('video');
+                v.id = 'ocr-video-stream';
+                v.style.display = 'none';
+                v.autoplay = true;
+                v.muted = true;
+                document.body.appendChild(v);
+                return v;
+            })();
+            video.srcObject = localStream;
+            video.play();
+
+            ocrStreamInterval = setInterval(() => {
+                if (ocrCooldown) return;
+                if (!video || video.videoWidth === 0) return;
+                const canvas = document.createElement('canvas');
+                canvas.width = 1280; canvas.height = 720;
+                canvas.getContext('2d').drawImage(video, 0, 0, 1280, 720);
+                window.r6api.analyzeMatchFrame(canvas.toDataURL('image/jpeg', 0.7));
+            }, 5000);
+
+            useNativeCapturer = false;
+            console.log('[Background OCR] Mode PC Fixe (getUserMedia) ✅');
+            showToast('🎥 Enregistrement fantôme activé', 'info');
+            return true;
+        } catch (e) {
+            console.warn('[Background OCR] getUserMedia échoué, passage en mode PC Portable...', e);
+            stopStreamCapture();
+            return false;
+        }
+    }
+
+    function stopStreamCapture() {
+        if (ocrStreamInterval) clearInterval(ocrStreamInterval);
+        ocrStreamInterval = null;
+        if (localStream) {
+            localStream.getTracks().forEach(t => t.stop());
+            localStream = null;
+        }
+        const video = document.getElementById('ocr-video-stream');
+        if (video) video.srcObject = null;
+    }
+
+    // Méthode 2 : desktopCapturer thumbnails (PC Portable, dual GPU)
+    function startNativeCapture() {
         const captureAndProcess = async () => {
             if (ocrCooldown) return;
             if (!window.r6api || !window.r6api.captureScreenFrame) return;
             try {
                 const frameData = await window.r6api.captureScreenFrame();
-                if (frameData) {
-                    window.r6api.analyzeMatchFrame(frameData);
-                }
+                if (frameData) window.r6api.analyzeMatchFrame(frameData);
             } catch (err) {
-                console.error("[Background OCR] Erreur capture:", err);
+                console.error('[Background OCR] Erreur native capture:', err);
             }
         };
-        
-        captureAndProcess(); // Lancer immédiatement
+        captureAndProcess();
         backgroundOcrInterval = setInterval(captureAndProcess, 5000);
-        showToast('🎥 Enregistrement fantôme activé (Auto OCR)', 'info');
+        useNativeCapturer = true;
+        console.log('[Background OCR] Mode PC Portable (desktopCapturer) ✅');
+        showToast('🎥 Enregistrement fantôme activé', 'info');
+    }
+
+    // Point d'entrée : essaie getUserMedia, sinon desktopCapturer
+    async function startScreenRecording() {
+        if (localStream || backgroundOcrInterval) return;
+        const streamOk = await startStreamCapture();
+        if (!streamOk) {
+            startNativeCapture();
+        }
     }
 
     function stopScreenRecording() {
+        stopStreamCapture();
         if (backgroundOcrInterval) clearInterval(backgroundOcrInterval);
         backgroundOcrInterval = null;
+        useNativeCapturer = false;
     }
+
 
     function showCoachModal(result) {
         let modal = document.getElementById('modal-ai-coach');
@@ -1058,11 +1132,9 @@
                 const idx = parseInt(e.target.value);
                 window.r6api.setDisplayIndex(idx);
                 
-                // Restart screen recording to apply the new screen immediately
-                if (backgroundOcrInterval) {
-                    stopScreenRecording();
-                    setTimeout(() => startScreenRecording(), 500); // slight delay to ensure it stopped
-                }
+                // Redémarrer la capture sur le nouvel écran (fonctionne en mode PC fixe ET portable)
+                stopScreenRecording();
+                setTimeout(() => startScreenRecording(), 300);
                 
                 showToast(`Écran de capture mis à jour : Écran ${idx + 1}`, 'success');
             });
