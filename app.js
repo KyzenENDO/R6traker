@@ -1128,13 +1128,15 @@
                 displaySelect.innerHTML = '<option value="0">Écran par défaut</option>';
             });
 
-            displaySelect.addEventListener('change', (e) => {
+            displaySelect.addEventListener('change', async (e) => {
                 const idx = parseInt(e.target.value);
-                window.r6api.setDisplayIndex(idx);
                 
-                // Redémarrer la capture sur le nouvel écran (fonctionne en mode PC fixe ET portable)
+                // ⚡ Attendre que l'index soit bien sauvegardé AVANT de redémarrer la capture
+                await window.r6api.setDisplayIndex(idx);
+                
+                // Redémarrer la capture sur le nouvel écran
                 stopScreenRecording();
-                setTimeout(() => startScreenRecording(), 300);
+                await startScreenRecording();
                 
                 showToast(`Écran de capture mis à jour : Écran ${idx + 1}`, 'success');
             });

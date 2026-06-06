@@ -38,5 +38,5 @@ contextBridge.exposeInMainWorld('r6api', {
 
     /* Display selection */
     listDisplays: () => ipcRenderer.invoke('list-displays'),
-    setDisplayIndex: (index) => ipcRenderer.send('set-display-index', index),
+    setDisplayIndex: (index) => ipcRenderer.invoke('set-display-index', index),
 });

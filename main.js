@@ -263,11 +263,12 @@ ipcMain.handle('list-displays', async () => {
     return { displays, selectedIndex: cfg.screenIndex || 0 };
 });
 
-ipcMain.on('set-display-index', (_, index) => {
+ipcMain.handle('set-display-index', (_, index) => {
     const cfg = loadConfig();
     cfg.screenIndex = index;
     saveConfig(cfg);
     console.log(`[Config] Écran de capture défini sur l'index ${index}`);
+    return true;
 });
 
 // Mode PC Fixe : retourne le source ID pour getUserMedia
