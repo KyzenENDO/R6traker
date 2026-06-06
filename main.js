@@ -266,27 +266,17 @@ ipcMain.on('set-display-index', (_, index) => {
 
 ipcMain.handle('get-screen-source-id', async () => {
     try {
-        // ── Priorité : capturer la fenêtre R6 Siege directement ──
-        // Évite de capturer le Tracker lui-même (son UI contient "VICTOIRE"/"DEFAITE")
-        const windowSources = await desktopCapturer.getSources({ types: ['window'] });
-        const r6Window = windowSources.find(s => {
-            const name = s.name.toLowerCase();
-            return name.includes('rainbow six') || name.includes('tom clancy');
-        });
-        if (r6Window) {
-            console.log(`[Capture] Fenêtre R6 Siege détectée → "${r6Window.name}"`);
-            return r6Window.id;
-        }
-
-        // Fallback : capture d'écran (si fenêtre R6 non trouvée)
-        console.log('[Capture] Fenêtre R6 non trouvée, fallback sur capture d\'écran');
         const sources = await desktopCapturer.getSources({ types: ['screen'] });
         if (!sources || sources.length === 0) return null;
+        
         const cfg = loadConfig();
         const screenIdx = cfg.screenIndex || 0;
         const source = sources[screenIdx] || sources[0];
+        
+        console.log(`[Capture] Source d'écran sélectionnée : ${source.name} (Index: ${screenIdx})`);
         return source ? source.id : null;
     } catch (err) {
+        console.error('[Capture] Erreur get-screen-source-id:', err);
         return null;
     }
 });
