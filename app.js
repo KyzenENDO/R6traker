@@ -1096,6 +1096,13 @@
             displaySelect.addEventListener('change', (e) => {
                 const idx = parseInt(e.target.value);
                 window.r6api.setDisplayIndex(idx);
+                
+                // Restart screen recording to apply the new screen immediately
+                if (localStream) {
+                    stopScreenRecording();
+                    setTimeout(() => startScreenRecording(), 500); // slight delay to ensure it stopped
+                }
+                
                 showToast(`Écran de capture mis à jour : Écran ${idx + 1}`, 'success');
             });
         }
