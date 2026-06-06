@@ -7,7 +7,7 @@ const Tesseract = require('tesseract.js');
 const { uIOhook } = require('uiohook-napi');
 
 // URL vers le fichier JSON de version hébergé en ligne (à modifier par votre URL de production sur GitHub)
-const VERSION_CHECK_URL = 'https://raw.githubusercontent.com/VOTRE_PSEUDO/VOTRE_DEPOT/main/version.json';
+const VERSION_CHECK_URL = 'https://raw.githubusercontent.com/KyzenENDO/R6traker/main/version.json';
 
 function checkForUpdates() {
     return new Promise((resolve) => {
