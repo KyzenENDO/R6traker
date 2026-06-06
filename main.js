@@ -2,7 +2,6 @@ const { app, BrowserWindow, globalShortcut, ipcMain, screen, net, shell, desktop
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
-const screenshot = require('screenshot-desktop');
 const Tesseract = require('tesseract.js');
 const { uIOhook } = require('uiohook-napi');
 
@@ -252,7 +251,14 @@ ipcMain.on('trigger-manual-scan', () => {
 });
 
 ipcMain.handle('list-displays', async () => {
-    const displays = await screenshot.listDisplays();
+    const allDisplays = screen.getAllDisplays();
+    const primary = screen.getPrimaryDisplay();
+    const displays = allDisplays.map(d => ({
+        id: d.id.toString(),
+        width: d.bounds.width,
+        height: d.bounds.height,
+        primary: d.id === primary.id
+    }));
     const cfg = loadConfig();
     return { displays, selectedIndex: cfg.screenIndex || 0 };
 });
@@ -476,12 +482,28 @@ async function scanScoreboardOCR() {
     await new Promise(resolve => setTimeout(resolve, 150));
 
     try {
-        const { nativeImage } = require('electron');
-        const displays = await screenshot.listDisplays();
+        const { nativeImage, screen } = require('electron');
         const cfg = loadConfig();
         const screenIdx = cfg.screenIndex || 0;
-        const mainDisplay = displays[screenIdx] || displays[0];
-        const imgBuffer = await screenshot({ screen: mainDisplay.id });
+        
+        const allDisplays = screen.getAllDisplays();
+        const mainDisplay = allDisplays[screenIdx] || allDisplays[0];
+        
+        // Obtenir la résolution native (en prenant en compte le zoom Windows/DPI)
+        const nativeWidth = Math.round(mainDisplay.bounds.width * mainDisplay.scaleFactor);
+        const nativeHeight = Math.round(mainDisplay.bounds.height * mainDisplay.scaleFactor);
+
+        const sources = await desktopCapturer.getSources({ 
+            types: ['screen'], 
+            thumbnailSize: { width: nativeWidth, height: nativeHeight } 
+        });
+        
+        // Trouver la source qui correspond exactement à l'écran choisi
+        const displayIdStr = mainDisplay.id.toString();
+        let source = sources.find(s => s.display_id === displayIdStr);
+        if (!source) source = sources[screenIdx] || sources[0];
+
+        const imgBuffer = source.thumbnail.toPNG();
 
         // ── Restaurer la fenêtre du Tracker (sans voler le focus du jeu) ──
         if (wasVisible && mainWindow && !mainWindow.isDestroyed()) mainWindow.showInactive();
