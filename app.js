@@ -734,74 +734,35 @@
         if (autoTrackerInterval) clearInterval(autoTrackerInterval);
         autoTrackerInterval = null;
     }
-    // --- IN-MEMORY SCREEN RECORDING FOR OCR ---
-    let ocrStreamInterval = null;
+
+    // --- NATIVE ELECTRON SCREEN RECORDING FOR OCR ---
+    let backgroundOcrInterval = null;
     let ocrCooldown = false;
-    let localStream = null;
 
-    async function startScreenRecording() {
-        if (localStream) return;
-        try {
-            const sourceId = await window.r6api.getScreenSourceId();
-            if (!sourceId) return;
-
-            localStream = await navigator.mediaDevices.getUserMedia({
-                audio: false,
-                video: {
-                    mandatory: {
-                        chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: sourceId,
-                        minWidth: 1280,
-                        maxWidth: 1920,
-                        minHeight: 720,
-                        maxHeight: 1080
-                    }
+    function startScreenRecording() {
+        if (backgroundOcrInterval) return;
+        
+        const captureAndProcess = async () => {
+            if (ocrCooldown) return;
+            if (!window.r6api || !window.r6api.captureScreenFrame) return;
+            try {
+                const frameData = await window.r6api.captureScreenFrame();
+                if (frameData) {
+                    window.r6api.analyzeMatchFrame(frameData);
                 }
-            });
-
-            const video = document.getElementById('ocr-video-stream');
-            if (video) {
-                video.srcObject = localStream;
-                video.play();
+            } catch (err) {
+                console.error("[Background OCR] Erreur capture:", err);
             }
-
-            ocrStreamInterval = setInterval(processOcrFrame, 5000); // 1 frame per 5 sec
-            showToast('🎥 Enregistrement fantôme activé (Auto OCR)', 'info');
-        } catch (e) {
-            console.error('Erreur screen recording', e);
-        }
+        };
+        
+        captureAndProcess(); // Lancer immédiatement
+        backgroundOcrInterval = setInterval(captureAndProcess, 5000);
+        showToast('🎥 Enregistrement fantôme activé (Auto OCR)', 'info');
     }
 
     function stopScreenRecording() {
-        if (ocrStreamInterval) clearInterval(ocrStreamInterval);
-        ocrStreamInterval = null;
-        if (localStream) {
-            localStream.getTracks().forEach(track => track.stop());
-            localStream = null;
-        }
-        const video = document.getElementById('ocr-video-stream');
-        if (video) video.srcObject = null;
-    }
-
-    function processOcrFrame() {
-        if (ocrCooldown) return;
-        const video = document.getElementById('ocr-video-stream');
-        const canvas = document.getElementById('ocr-canvas');
-        if (!video || !canvas || video.videoWidth === 0) return;
-
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Scale down to make OCR extremely fast
-        const scaledCanvas = document.createElement('canvas');
-        scaledCanvas.width = 1280;
-        scaledCanvas.height = 720;
-        scaledCanvas.getContext('2d').drawImage(canvas, 0, 0, 1280, 720);
-
-        const frameData = scaledCanvas.toDataURL('image/jpeg', 0.7);
-        window.r6api.analyzeMatchFrame(frameData);
+        if (backgroundOcrInterval) clearInterval(backgroundOcrInterval);
+        backgroundOcrInterval = null;
     }
 
     function showCoachModal(result) {
@@ -1098,7 +1059,7 @@
                 window.r6api.setDisplayIndex(idx);
                 
                 // Restart screen recording to apply the new screen immediately
-                if (localStream) {
+                if (backgroundOcrInterval) {
                     stopScreenRecording();
                     setTimeout(() => startScreenRecording(), 500); // slight delay to ensure it stopped
                 }

@@ -28,7 +28,7 @@ contextBridge.exposeInMainWorld('r6api', {
     fetchLeaderboardHeadless: () => ipcRenderer.invoke('fetch-leaderboard-headless'),
     
     /* Auto-Tracker Desktop Capturer */
-    getScreenSourceId: () => ipcRenderer.invoke('get-screen-source-id'),
+    captureScreenFrame: () => ipcRenderer.invoke('capture-screen-frame'),
     analyzeMatchFrame: (frameData) => ipcRenderer.send('analyze-match-frame', frameData),
     
     /* Utilities */

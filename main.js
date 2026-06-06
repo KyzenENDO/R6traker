@@ -270,12 +270,9 @@ ipcMain.on('set-display-index', (_, index) => {
     console.log(`[Config] Écran de capture défini sur l'index ${index}`);
 });
 
-ipcMain.handle('get-screen-source-id', async () => {
+ipcMain.handle('capture-screen-frame', async () => {
     try {
         const { screen } = require('electron');
-        const sources = await desktopCapturer.getSources({ types: ['screen'] });
-        if (!sources || sources.length === 0) return null;
-        
         const cfg = loadConfig();
         const screenIdx = cfg.screenIndex || 0;
         
@@ -283,13 +280,18 @@ ipcMain.handle('get-screen-source-id', async () => {
         const mainDisplay = allDisplays[screenIdx] || allDisplays[0];
         const displayIdStr = mainDisplay.id.toString();
         
+        // Résolution suffisante pour l'OCR de fond, extrêmement rapide
+        const sources = await desktopCapturer.getSources({ 
+            types: ['screen'], 
+            thumbnailSize: { width: 1280, height: 720 } 
+        });
+        
         let source = sources.find(s => s.display_id === displayIdStr);
         if (!source) source = sources[screenIdx] || sources[0];
         
-        console.log(`[Capture] Source d'écran sélectionnée : ${source.name} (Index: ${screenIdx})`);
-        return source ? source.id : null;
+        return source ? source.thumbnail.toDataURL() : null;
     } catch (err) {
-        console.error('[Capture] Erreur get-screen-source-id:', err);
+        console.error('[Capture] Erreur capture-screen-frame:', err);
         return null;
     }
 });
