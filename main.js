@@ -272,12 +272,19 @@ ipcMain.on('set-display-index', (_, index) => {
 
 ipcMain.handle('get-screen-source-id', async () => {
     try {
+        const { screen } = require('electron');
         const sources = await desktopCapturer.getSources({ types: ['screen'] });
         if (!sources || sources.length === 0) return null;
         
         const cfg = loadConfig();
         const screenIdx = cfg.screenIndex || 0;
-        const source = sources[screenIdx] || sources[0];
+        
+        const allDisplays = screen.getAllDisplays();
+        const mainDisplay = allDisplays[screenIdx] || allDisplays[0];
+        const displayIdStr = mainDisplay.id.toString();
+        
+        let source = sources.find(s => s.display_id === displayIdStr);
+        if (!source) source = sources[screenIdx] || sources[0];
         
         console.log(`[Capture] Source d'écran sélectionnée : ${source.name} (Index: ${screenIdx})`);
         return source ? source.id : null;
